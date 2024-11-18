@@ -60,6 +60,7 @@ matmul:
     mv s4, a3 # incrementing matrix B pointer, increments during inner loop 
     
 outer_loop_start:
+    ebreak
     #s0 is going to be the loop counter for the rows in A
     li s1, 0
     mv s4, a3
@@ -94,6 +95,7 @@ inner_loop_start:
     mv a4, a5 # stride for matrix B
     
     jal dot
+    ebreak
     
     mv t0, a0 # storing result of the dot product into t0
     
@@ -115,7 +117,27 @@ inner_loop_start:
     j inner_loop_start
     
 inner_loop_end:
+    ebreak
     # TODO: Add your own implementation
+    addi s0,s0,1    #next row
+    slli t2,a2,2    #shift bye of first matrix
+    add s3,s3,t2   #next row
+    j outer_loop_start
+    
+outer_loop_end:
+
+    lw ra, 0(sp)
+    
+    lw s0, 4(sp)
+    lw s1, 8(sp)
+    lw s2, 12(sp)
+    lw s3, 16(sp)
+    lw s4, 20(sp)
+    lw s5, 24(sp)
+    addi sp,sp,28
+    
+    jr ra
+    
 
 error:
     li a0, 38

@@ -166,7 +166,11 @@ classify:
     
     lw t0, 0(s3)
     lw t1, 0(s8)
-    # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
+    
+    #mul a0, t0, t1 ############################################## FIXME: Replace 'mul' with your own implementation
+    jal times_start 
+    mv a0,t2
+    
     slli a0, a0, 2
     jal malloc 
     beq a0, x0, error_malloc
@@ -203,8 +207,11 @@ classify:
     mv a0, s9 # move h to the first argument
     lw t0, 0(s3)
     lw t1, 0(s8)
-    # mul a1, t0, t1 # length of h array and set it as second argument
+    #mul a1, t0, t1 ################################################## length of h array and set it as second argument
     # FIXME: Replace 'mul' with your own implementation
+    jal times_start 
+    mv a1,t2
+    
     
     jal relu
     
@@ -226,7 +233,11 @@ classify:
     
     lw t0, 0(s3)
     lw t1, 0(s6)
-    # mul a0, t0, t1 # FIXME: Replace 'mul' with your own implementation
+    
+    #mul a0, t0, t1 ############################################# FIXME: Replace 'mul' with your own implementation
+    jal times_start 
+    mv a0,t2
+    
     slli a0, a0, 2
     jal malloc 
     beq a0, x0, error_malloc
@@ -286,8 +297,11 @@ classify:
     mv a0, s10 # load o array into first arg
     lw t0, 0(s3)
     lw t1, 0(s6)
-    mul a1, t0, t1 # load length of array into second arg
-    # FIXME: Replace 'mul' with your own implementation
+    
+     # load length of array into second arg
+    ########################################################## FIXME: Replace 'mul' with your own implementation
+    jal times_start 
+    mv a1,t2
     
     jal argmax
     
@@ -376,7 +390,28 @@ epilouge:
     addi sp, sp, 48
     
     jr ra
-
+    
+    
+times_start:
+    li t2,0
+    li t3,0
+times_loop:
+    beqz t0,end_times
+    andi t4,t0,1
+    bnez t4,times_plus
+    srli t0,t0,1
+    slli t1,t1,1
+    j times_loop
+    
+times_plus:
+    add t2,t2,t1
+    srli t0,t0,1
+    slli t1,t1,1
+    j times_loop
+    
+end_times:   
+    jr ra
+    
 error_args:
     li a0, 31
     j exit
